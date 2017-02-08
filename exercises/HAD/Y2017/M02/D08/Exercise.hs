@@ -63,7 +63,8 @@ sample = "1 0 0 1 0 1"
 -- so we need to convert our sample to a list of Ints:
 
 parseInput :: String -> [Int]
-parseInput = undefined
+parseInput = fmap read . words
+--parseInput = fmap (\s -> read s :: Int) . words
 
 -- then verify our solution is the result below:
 
