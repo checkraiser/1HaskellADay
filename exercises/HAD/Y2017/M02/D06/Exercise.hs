@@ -62,7 +62,19 @@ Hint
 What does counting subsets have to do with characters and "ON"/"OFF" switches?
 --}
 
+-- | Subset size of set of size `n`
+--
+-- Examples:
+--
+-- >>> subsetSizeOfSetOfSize 3
+-- 8
+--
+-- >>> subsetSizeOfSetOfSize 972
+-- 557696
+--
+-- >>> subsetSizeOfSetOfSize 994
+-- 563584
 subsetSizeOfSetOfSize :: Integer -> Integer
-subsetSizeOfSetOfSize n = undefined
+subsetSizeOfSetOfSize = (`mod` 1000000) . (2 ^)
 
 -- define the above function and solve for n = 972 then n = 994
