@@ -1,7 +1,10 @@
+{-# LANGUAGE InstanceSigs #-}
 module Y2017.M02.D07.Exercise where
 
 import Control.Comonad
-import Data.Set (Set, fromList)
+import Data.List (intercalate)
+import Data.Set (Set)
+import qualified Data.Set as Set
 
 import Codec.Compression.GZip
 
@@ -51,7 +54,7 @@ When the above operations are run, you will get the following:
 --}
 
 result :: [Grp Int]
-result = map (G . fromList)
+result = map (G . Set.fromList)
              [[1,2,3,4,5,8,10],[2,5],[1,3,4],[8,10],[6..10],[1,3,4,6,7,9]]
 
 {--
@@ -76,14 +79,14 @@ addition is commutative but subtraction is not.
 -- Okay, to read the sample input and write the sample output, we need a
 -- type value:
 
-data Grp a = G (Set a)
+data Grp a = G { grp :: Set a }
    deriving (Eq, Ord)
 
 instance Show a => Show (Grp a) where
-   show grp = undefined
+   show = ('{':) . (++ "}") . intercalate ", " . map show . Set.toList . grp
 
-instance Read a => Read (Grp a) where
-   readsPrec n = undefined
+instance (Read a, Ord a) => Read (Grp a) where
+   readsPrec _ ('{':list) = [(G . Set.fromList $ read ('[':init list ++ "]"), "")]
 
 -- So that a Grp, such as {1, 2, 3, 4, 5} and be read and shown as such
 
@@ -101,7 +104,10 @@ a − b = undefined
 -- This also means that Grp is a comonad. So we must make it comonadic.
 
 instance Comonad Grp where
-   extract grp  = undefined
+   extract :: Grp a -> a
+   extract (G as) = undefined
+
+   extend :: (Grp a -> b) -> Grp a -> Grp b
    extend f grp = undefined
 
 -- of course, for Grp to be a comonad, it has to be a functor, so:
