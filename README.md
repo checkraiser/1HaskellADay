@@ -19,7 +19,11 @@ $ stack ghci
 λ> check =<< date 2017 2 6
 Examples: 3  Tried: 3  Errors: 0  Failures: 0
 ```
-- compare your answer with the proposed one (in the `Solution.hs` file)
+- compare your answer with the proposed one in the respective `Solution.hs` file; in order to check the solution, run
+```
+λ> doctest ["-iexercises/HAD", "exercises/HAD/Y2017/M02/D06/Solution.hs"]
+Examples: 3  Tried: 3  Errors: 0  Failures: 0
+```
 
 ### The 1had executable
 
