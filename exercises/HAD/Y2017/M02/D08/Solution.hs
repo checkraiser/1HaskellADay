@@ -82,14 +82,19 @@ result = 3.5
 
 -- So, let's do this: we multiply couples by the expected offspring dominance
 
+-- | Example:
+--
+-- >>> expectedOffspring (parseInput sample)
+-- 3.5
 expectedOffspring :: [Int] -> Float
 expectedOffspring = sum . zipWith (*) xpect . map fromIntegral
-
--- *Y2017.M02.D08.Solution> expectedOffspring (parseInput sample) ~> 3.5
 
 -- After you verify expectedOffspring works with sample, what is the answer for:
 
 population :: String 
 population = "17224 19615 19440 18066 17971 19296"
 
--- *Y2017.M02.D08.Solution> expectedOffspring (parseInput population) ~> 157628.0
+-- | Example:
+--
+-- >>> expectedOffspring (parseInput population)
+-- 157628.0
