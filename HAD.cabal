@@ -18,10 +18,13 @@ library
   hs-source-dirs:      exercises/HAD
   default-language:    Haskell2010
   exposed-modules:     Control.Logic.Frege
+                     -- adapt for Haddock:
+                     --, Y2017.M02.D09.Exercise
   build-depends:       base >= 4.8 && < 5
                      , containers
                      , comonad
                      , bytestring
+                     , mtl
                      , zlib
 
 executable 1had

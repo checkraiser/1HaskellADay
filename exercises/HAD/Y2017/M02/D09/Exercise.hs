@@ -1,6 +1,4 @@
-module Y2017.M02.D09.Exercise where
-
-{--
+{- |
 Today's problem is inspired by http://rosalind.info/problems/fibo/
 
 Fibonacci Numbers solved by 2850 as of February 8th, 2017
@@ -17,7 +15,33 @@ F(n) = F(n-1) + F(n-2) for n > 1
 Given: A positive integer n <= 25
 
 Return: The value of F(n)
---}
+
+Examples:
+
+>>> fibo sample == result
+True
+
+>>> fibo big
+75025
+
+>>> fibo' sample == result
+True
+
+>>> fibo' big
+75025
+
+>>> map (fibr seed) [sample, big, really]
+[8,75025,354224848179261915075]
+
+>>> map (fibr' seed) [sample, big, really]
+[8,75025,354224848179261915075]
+
+>>> map (fibr'' seed) [sample, big, really]
+[8,75025,354224848179261915075]
+-}
+module Y2017.M02.D09.Exercise where
+
+import Control.Monad.State
 
 sample :: Integer
 sample = 6
@@ -25,28 +49,36 @@ sample = 6
 result :: Integer
 result = 8
 
-fibo :: Integer -> Integer
-fibo n = undefined
-
--- so here's the thing. If you defined fibo doubly-recursively, as shown above
--- you can get an answer, within a second for fibo 25. Try it.
-
 big :: Integer
 big = 25
 
--- what is the value of fibo big?
+really :: Integer
+really = 100
 
+fibo :: Integer -> Integer
+fibo n 
+  | n == 0 = 0
+  | n == 1 = 1
+  | otherwise = fibo (n - 1) + fibo (n - 2)
+
+fibo' :: Integer -> Integer
+fibo' n = flip evalState (0,1) $ do
+  forM [0..(n-1)] $ const $ do
+    (a,b) <- get
+    put (b,a+b)
+  (a,_) <- get
+  return a
+
+-- So here's the thing. If you defined fibo doubly-recursively, as shown above
+-- you can get an answer, within a second for fibo 25. Try it.
+--
+-- What is the value of fibo big?
 -- Not a problem on systems today with GHC, because GHC is that good.
 
 {-- BONUS -----------------------------------------------------------------
 
 but:
---}
 
-really :: Integer
-really = 100
-
-{-- 
 What is the value of fibo really?
 
 That's a problem, isn't it, because fibo is in exponential time if defined
@@ -56,16 +88,31 @@ F(n-1) ... so why recompute that subtree when you've already just computed it
 So, use that knowledge. Retain it. Define a fibonacci function that returns
 the fibonacci at n in linear time by retaining the previous [0..n-1] fibonacci
 numbers. This is what we call dynamic programming.
+
+Of course you need to seed your fibonacci computer for it to work. What shall
+your seed be?
 --}
 
-fibr :: [Integer] -> Integer -> Integer
-fibr fibs n = undefined
+-- Honestly, I glanced [here](https://wiki.haskell.org/The_Fibonacci_sequence)
 
--- of course you need to seed your fibonacci computer for it to work. What shall
--- your seed be?
+fibr :: [Integer] -> Integer -> Integer
+fibr _ n = flip evalState (0,1) $ do
+  forM [0..(n-1)] $ const $ do
+    (a,b) <- get
+    put (b,a+b)
+  (a,_) <- get
+  return a
 
 seed :: [Integer]
-seed = undefined
+seed = [0,1]
 
--- What is the values of map (fibr seed) [sample, big, really]? 
--- Are they return timely?
+fibr' :: [Integer] -> Integer -> Integer
+fibr' fibs n = fibs' !! (fromIntegral n)
+  where
+    fibs' = fibs ++ (zipWith (+) fibs' (tail fibs'))
+
+fibr'' :: [Integer] -> Integer -> Integer
+fibr'' fibs n = fibs' !! (fromIntegral n)
+  where
+    fibs' = fibs ++ next fibs'
+    next (a : t@(b:_)) = (a+b) : next t
