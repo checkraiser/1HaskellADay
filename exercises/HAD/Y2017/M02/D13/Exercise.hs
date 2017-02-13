@@ -1,6 +1,11 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Y2017.M02.D13.Exercise where
 
 import Codec.Compression.GZip
+import Control.Monad.State
+import Data.Char
+import Data.List
+import Data.Maybe
 
 -- below import available from 1HaskellADay git repository
 
@@ -50,10 +55,13 @@ based on divide-and-conquer.
 -- the lists that follow
 
 parseMetadata :: String -> (Int, Int)
-parseMetadata line = undefined
+parseMetadata line =
+  case line of
+    k:_:n:[] -> (digitToInt k, digitToInt n)
+    otherwise -> error "Wrong format."
 
 parseList :: String -> [Int]
-parseList line = undefined
+parseList line = map read $ words line :: [Int]
 
 -- so we parse the metadata in the first line, then in each line thereafter
 -- we parse that line as a list to 'not difficult develop a divide-and-conquer
@@ -65,17 +73,39 @@ parseList line = undefined
 -- element value is, be it -1 for no such element or x where x is that element
 
 majorityElement :: Int -> [Int] -> Int
-majorityElement lengthList list = undefined
+majorityElement lengthList list =
+  maybe
+    (-1)
+    (fst)
+    (find
+       (\(x,c) -> c > (lengthList `div` 2))
+       ((\x -> (x, execState (count x list) 0)) <$> (nub list)))
+
+count :: Int -> [Int] -> State Int ()
+count n xs =
+  foldl
+    (\acc x ->
+       if x == n
+         then acc >> modify (1 +)
+         else acc)
+    (put 0)
+    xs
 
 -- now, how you do that, it's up to you.
 
 -- Question. Is it always necessary to scan the entire list each time to find
 -- the value of majorityElement? I think it's not necessary. Your thoughts?
 
--- okay, so let's tie this together
-
+-- | Okay, so let's tie this together 
+--
+-- Examples:
+--
+-- >>> (unwords $ show <$> majorityElements sample) == result
+-- True
 majorityElements :: String -> [Int]
-majorityElements inputdata = undefined
+majorityElements inputData =
+  let (h:t) = lines inputData
+  in majorityElement (snd $ parseMetadata h) . parseList <$> t
 
 -- of course, the format of the output is a string. Hint: see Friday's
 -- problem for a discussion on that (imported above).
