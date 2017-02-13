@@ -5,8 +5,7 @@ cabal.sandbox.config
 .stack-work
 *.o
 *.hi
+*.sw*
 *.chi
 *.chs.h
 .virthualenv
-
-*.sw*
